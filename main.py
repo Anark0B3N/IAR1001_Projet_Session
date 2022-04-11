@@ -5,6 +5,9 @@ import glob
 import numpy as np
 from mnist import MNIST
 
+
+import CNN
+
 def main():
 
 
@@ -12,8 +15,9 @@ def main():
     # or
     # images, labels = mndata.load_testing()
 
-    Hough()
-
+    # Hough()
+    CNN.load_imgs()
+    CNN.create_training_data()
     # quit = False
     # while(not quit):
     #     imageFound = False
