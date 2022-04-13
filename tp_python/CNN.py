@@ -16,8 +16,7 @@ import pickle
 training_data = []
 training_data_label = []
 imgTable = []
-IMG_SIZE = 50
-
+IMG_SIZE = 28
 
 def load_imgs():
     listOfImages = []
@@ -71,15 +70,28 @@ def create_training_data():
 
 
 def train(X, label):
+    (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+    X_train = X_train / 255
+    X_test = X_test / 255
+
+    X_train_flattened = X_train.reshape(len(X_train), 28 * 28)
+    X_test_flattened = X_test.reshape(len(X_test), 28 * 28)
+
+
     model = Sequential([
-        Dense(10, input_shape=(2500,), activation='sigmoid')
+        Dense(100, input_shape=(784,), activation='relu'),
+        Dense(55, activation='relu'),
+        Dense(70, activation='relu'),
+        Dense(100, activation='relu'),
+        Dense(10, activation='sigmoid')
     ])
 
     model.compile(optimizer='adam',
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
-    model.fit(X, label, epochs=7)
+    model.fit(X_train_flattened, y_train, epochs=7)
 
     # model = Sequential()
     #
@@ -110,19 +122,26 @@ def train(X, label):
 def test_model():
     global training_data
 
+    (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+    X_train = X_train / 255
+    X_test = X_test / 255
+
+    X_train_flattened = X_train.reshape(len(X_train), 28 * 28)
+    X_test_flattened = X_test.reshape(len(X_test), 28 * 28)
+
     myModel = tf.keras.models.load_model('cnn_image_digit_model.model')
 
     appImg = cv2.imread("handwritten_input.png", cv2.COLOR_BGR2GRAY)
     imgray = cv2.cvtColor(appImg, cv2.COLOR_BGR2GRAY)
-    imgray = cv2.resize(imgray, (IMG_SIZE, IMG_SIZE))
-
     testImg = cv2.resize(imgray, (IMG_SIZE, IMG_SIZE))
-    testImg = testImg / 255
+
     testImg = testImg.reshape(IMG_SIZE * IMG_SIZE)
+    testImg = testImg / 255
 
     testArray = numpy.array([testImg, testImg])
 
     y_predicted = myModel.predict(testArray)
-    y_predicted[0]
 
+    print(y_predicted[0])
     print(np.argmax(y_predicted[0]))
