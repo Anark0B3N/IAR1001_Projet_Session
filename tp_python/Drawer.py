@@ -1,8 +1,15 @@
+import cv2
 from kivy.app import App
+from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.graphics import Color, Ellipse, Line
 from kivy.uix.boxlayout import BoxLayout
+import numpy
+from kivy.config import Config
+Config.set('graphics', 'resizable', False)
+Config.set('graphics', 'width', '500')
+Config.set('graphics', 'height', '610')
 
 
 def runDrawer():
@@ -31,13 +38,15 @@ class MyPaintApp(App):
         self.paint_container = MyPaintContainerWidget()
         self.painter = MyPaintWidget()
 
-        layout = BoxLayout(padding=10, size=(750, 100))
+        layout = BoxLayout(padding=10, size=(500, 100))
         clearbtn = Button(text='Clear')
         clearbtn.bind(on_release=self.clear_canvas)
         saveBtn = Button(text='save')
         saveBtn.bind(on_release=self.save_canvas)
+        label = Label(text='This number is: X', font_size='20sp')
         layout.add_widget(clearbtn)
         layout.add_widget(saveBtn)
+        layout.add_widget(label)
 
         self.paint_container.add_widget(self.painter)
         self.parent.add_widget(layout)
@@ -50,3 +59,9 @@ class MyPaintApp(App):
 
     def save_canvas(self, obj):
         self.parent.export_to_png("handwritten_input.png")
+        savedImg = cv2.imread("handwritten_input.png", -1)
+        savedImg = cv2.cvtColor(savedImg, cv2.COLOR_BGR2GRAY)
+        savedImg = savedImg[0:len(savedImg) - 110, 0:len(savedImg[0])]
+        savedImg = cv2.resize(savedImg, (50, 50))
+
+        cv2.imwrite("handwritten_input.png", savedImg)
