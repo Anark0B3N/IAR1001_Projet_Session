@@ -17,12 +17,11 @@ def main():
     # images, labels = mndata.load_testing()
 
     # Hough()
-    # CNN.load_imgs()
-    # CNN.create_training_data()
-
+    CNN.load_imgs()
+    CNN.create_training_data()
+    #
     runDrawer()
-
-    CNN.test_model()
+    #
 
     # quit = False
     # while(not quit):

@@ -7,6 +7,9 @@ from kivy.graphics import Color, Ellipse, Line
 from kivy.uix.boxlayout import BoxLayout
 import numpy
 from kivy.config import Config
+
+import CNN
+
 Config.set('graphics', 'resizable', False)
 Config.set('graphics', 'width', '500')
 Config.set('graphics', 'height', '610')
@@ -60,8 +63,11 @@ class MyPaintApp(App):
     def save_canvas(self, obj):
         self.parent.export_to_png("handwritten_input.png")
         savedImg = cv2.imread("handwritten_input.png", -1)
-        savedImg = cv2.cvtColor(savedImg, cv2.COLOR_BGR2GRAY)
+        # savedImg = cv2.cvtColor(savedImg, -1)
         savedImg = savedImg[0:len(savedImg) - 110, 0:len(savedImg[0])]
         savedImg = cv2.resize(savedImg, (50, 50))
 
         cv2.imwrite("handwritten_input.png", savedImg)
+
+        CNN.test_model()
+
