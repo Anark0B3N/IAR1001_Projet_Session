@@ -165,8 +165,8 @@ def test_model():
     myModel = tf.keras.models.load_model('cnn_image_digit_model.model')
 
     appImg = cv2.imread("handwritten_input.png", cv2.COLOR_BGR2GRAY)
-    imgray = cv2.cvtColor(appImg, cv2.COLOR_BGR2GRAY)
-    testImg = cv2.resize(imgray, (IMG_SIZE, IMG_SIZE))
+    # imgray = cv2.cvtColor(appImg, cv2.COLOR_BGR2GRAY)
+    testImg = cv2.resize(appImg, (IMG_SIZE, IMG_SIZE))
 
     cv2.imshow('sds', testImg)
     cv2.waitKey(0)

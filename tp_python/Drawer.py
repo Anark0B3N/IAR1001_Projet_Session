@@ -62,12 +62,55 @@ class MyPaintApp(App):
 
     def save_canvas(self, obj):
         self.parent.export_to_png("handwritten_input.png")
-        savedImg = cv2.imread("handwritten_input.png", -1)
-        # savedImg = cv2.cvtColor(savedImg, -1)
+        savedImg = cv2.imread("handwritten_input.png", cv2.COLOR_BGRA2GRAY)
+
+
+        savedImg = cv2.cvtColor(savedImg, cv2.COLOR_BGRA2GRAY)
         savedImg = savedImg[0:len(savedImg) - 110, 0:len(savedImg[0])]
         savedImg = cv2.resize(savedImg, (28, 28))
+
+        mass_center_x = 0
+        mass_center_count = 0
+        mass_center_y = 0
+
+        x = 0
+        for row in savedImg:
+            y = 0
+            for pixel in row:
+                if pixel > 51:
+                    mass_center_x += x
+                    mass_center_y += y
+                    mass_center_count += 1
+                y += 1
+
+            x += 1
+
+        mass_center_x /= mass_center_count
+        mass_center_y /= mass_center_count
+
+        imgCenter = 14
+
+        savedImg = translateImg(savedImg, int(imgCenter - mass_center_x), int(imgCenter - mass_center_y))
 
         cv2.imwrite("handwritten_input.png", savedImg)
 
         CNN.test_model()
 
+
+def translateImg(img, x_transl, y_transl):
+    toReturn = img.copy()
+    x = 0
+    for row in img:
+        y = 0
+        for pixel in row:
+            if pixel > 51:
+                toReturn[x][y] = 0
+                x_pos = x + x_transl
+                y_pos = y + y_transl
+                if x_pos > -1 and y_transl > -1 and x_pos < 28 and y_pos < 28:
+                    toReturn[x_pos][y_pos] = 255
+
+            y += 1
+        x += 1
+
+    return toReturn
