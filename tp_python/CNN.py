@@ -13,10 +13,11 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D
 
 import pickle
 
+from ImageDetails import IMG_DETAILS
+
 training_data = []
 training_data_label = []
 imgTable = []
-IMG_SIZE = 28
 
 def load_imgs():
     listOfImages = []
@@ -37,7 +38,6 @@ def load_imgs():
 
 def create_training_data():
 
-    global IMG_SIZE
     global imgTable
     global training_data
     global training_data_label
@@ -50,9 +50,9 @@ def create_training_data():
             label_num += 1
 
         for img in img_row:
-            img_resized = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
+            img_resized = cv2.resize(img, (IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
             img_resized = img_resized / 255
-            img_resized = img_resized.reshape(IMG_SIZE * IMG_SIZE)
+            img_resized = img_resized.reshape(IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE)
             training_data.append(img_resized)
             training_data_label.append(label_num)
 
@@ -63,22 +63,36 @@ def create_training_data():
     # each number have 500 images for a total of 5000
 
 
-    X = np.array(training_data).reshape(5000, IMG_SIZE*IMG_SIZE)
+    X = np.array(training_data).reshape(5000, IMG_DETAILS.IMG_SIZE*IMG_DETAILS.IMG_SIZE)
     # training_data_label = np.array(training_data_label).reshape(-1, 10)
 
     train(X, numpy.array(training_data_label))
 
 
 def train(X, label):
-    (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
+    (X1_train, y_train), (X1_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+    X_train = numpy.empty((60000, IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
+    X_test = numpy.empty((60000, IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
+
+    it_image = 0
+    for image in X1_train:
+        X_train[it_image] = cv2.resize(image, (IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
+        it_image += 1
+
+    it_image = 0
+    for image in X1_test:
+        X_test[it_image] = cv2.resize(image, (IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
+        it_image += 1
+
 
     X_train = X_train / 255
     X_test = X_test / 255
 
-    X_train_flattened = X_train.reshape(len(X_train), 28 * 28)
+    X_train_flattened = X_train.reshape(len(X_train), IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE)
     np.append(X_train_flattened, X)
     np.append(y_train, label)
-    X_test_flattened = X_test.reshape(len(X_test), 28 * 28)
+    X_test_flattened = X_test.reshape(len(X_test), IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE)
 
     it = 0
     for img in X_train_flattened:
@@ -110,7 +124,7 @@ def train(X, label):
 
 
     model = Sequential([
-        Dense(100, input_shape=(784,), activation='relu'),
+        Dense(100, input_shape=(IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE,), activation='relu'),
         Dense(2500, activation='relu'),
         Dense(2000, activation='relu'),
         Dense(1000, activation='relu'),
@@ -154,41 +168,41 @@ def train(X, label):
 def test_model():
     global training_data
 
-    (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
+    # (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
 
     # X_train = X_train / 255
     # X_test = X_test / 255
 
-    X_train_flattened = X_train.reshape(len(X_train), 28 * 28)
-    X_test_flattened = X_test.reshape(len(X_test), 28 * 28)
+    # X_train_flattened = X_train.reshape(len(X_train), IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE)
+    # X_test_flattened = X_test.reshape(len(X_test), IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE)
 
     myModel = tf.keras.models.load_model('cnn_image_digit_model.model')
 
     appImg = cv2.imread("handwritten_input.png", cv2.COLOR_BGR2GRAY)
     # imgray = cv2.cvtColor(appImg, cv2.COLOR_BGR2GRAY)
-    testImg = cv2.resize(appImg, (IMG_SIZE, IMG_SIZE))
+    testImg = cv2.resize(appImg, (IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
 
     cv2.imshow('sds', testImg)
     cv2.waitKey(0)
-    cv2.imshow('sds', X_test[0])
-    cv2.waitKey(0)
+    # cv2.imshow('sds', X_test[0])
+    # cv2.waitKey(0)
 
-    imgTestSave = X_test[0]
-    x = 0
-    for row in imgTestSave:
-        y = 0
-        for pixel in row:
-            if pixel > (0.2 * 255):
-                imgTestSave[x][y] = 255
-            else:
-                imgTestSave[x][y] = 0
-            y += 1
-        x += 1
+    # imgTestSave = X_test[0]
+    # x = 0
+    # for row in imgTestSave:
+    #     y = 0
+    #     for pixel in row:
+    #         if pixel > (0.2 * 255):
+    #             imgTestSave[x][y] = 255
+    #         else:
+    #             imgTestSave[x][y] = 0
+    #         y += 1
+    #     x += 1
 
 
-    cv2.imwrite("testmnist.png", imgTestSave)
+    # cv2.imwrite("testmnist.png", imgTestSave)
 
-    testImg = testImg.reshape(IMG_SIZE * IMG_SIZE)
+    testImg = testImg.reshape(IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE)
     testImg = testImg / 255
 
     testArray = numpy.array([testImg, testImg])

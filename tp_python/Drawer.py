@@ -9,6 +9,7 @@ import numpy
 from kivy.config import Config
 
 import CNN
+from ImageDetails import IMG_DETAILS
 
 Config.set('graphics', 'resizable', False)
 Config.set('graphics', 'width', '500')
@@ -67,7 +68,7 @@ class MyPaintApp(App):
 
         savedImg = cv2.cvtColor(savedImg, cv2.COLOR_BGRA2GRAY)
         savedImg = savedImg[0:len(savedImg) - 110, 0:len(savedImg[0])]
-        savedImg = cv2.resize(savedImg, (28, 28))
+        savedImg = cv2.resize(savedImg, (IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
 
         mass_center_x = 0
         mass_center_count = 0
@@ -88,7 +89,7 @@ class MyPaintApp(App):
         mass_center_x /= mass_center_count
         mass_center_y /= mass_center_count
 
-        imgCenter = 14
+        imgCenter = int(IMG_DETAILS.IMG_SIZE / 2)
 
         savedImg = translateImg(savedImg, int(imgCenter - mass_center_x), int(imgCenter - mass_center_y))
 
@@ -98,7 +99,7 @@ class MyPaintApp(App):
 
 
 def translateImg(img, x_transl, y_transl):
-    toReturn = numpy.zeros((28,28))
+    toReturn = numpy.zeros((IMG_DETAILS.IMG_SIZE,IMG_DETAILS.IMG_SIZE))
     x = 0
     for row in img:
         y = 0
@@ -107,7 +108,7 @@ def translateImg(img, x_transl, y_transl):
                 # toReturn[x][y] = 0
                 x_pos = x + x_transl
                 y_pos = y + y_transl
-                if x_pos > -1 and y_transl > -1 and x_pos < 28 and y_pos < 28:
+                if x_pos > -1 and y_transl > -1 and x_pos < IMG_DETAILS.IMG_SIZE and y_pos < IMG_DETAILS.IMG_SIZE:
                     toReturn[x_pos][y_pos] = 255
                 else:
                     a = 8
