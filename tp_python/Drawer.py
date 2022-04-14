@@ -25,7 +25,7 @@ class MyPaintWidget(Widget):
 
         with self.canvas:
             Color(1, 1, 1, mode='rgb')
-            touch.ud['line'] = Line(points=(touch.x, touch.y), width=10)
+            touch.ud['line'] = Line(points=(touch.x, touch.y), width=17)
 
     def on_touch_move(self, touch):
         touch.ud['line'].points += [touch.x, touch.y]
@@ -65,7 +65,7 @@ class MyPaintApp(App):
         savedImg = cv2.imread("handwritten_input.png", -1)
         # savedImg = cv2.cvtColor(savedImg, -1)
         savedImg = savedImg[0:len(savedImg) - 110, 0:len(savedImg[0])]
-        savedImg = cv2.resize(savedImg, (50, 50))
+        savedImg = cv2.resize(savedImg, (28, 28))
 
         cv2.imwrite("handwritten_input.png", savedImg)
 

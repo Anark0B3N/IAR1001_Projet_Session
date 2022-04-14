@@ -124,8 +124,8 @@ def test_model():
 
     (X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
 
-    X_train = X_train / 255
-    X_test = X_test / 255
+    # X_train = X_train / 255
+    # X_test = X_test / 255
 
     X_train_flattened = X_train.reshape(len(X_train), 28 * 28)
     X_test_flattened = X_test.reshape(len(X_test), 28 * 28)
@@ -135,6 +135,13 @@ def test_model():
     appImg = cv2.imread("handwritten_input.png", cv2.COLOR_BGR2GRAY)
     imgray = cv2.cvtColor(appImg, cv2.COLOR_BGR2GRAY)
     testImg = cv2.resize(imgray, (IMG_SIZE, IMG_SIZE))
+
+    cv2.imshow('sds', testImg)
+    cv2.waitKey(0)
+    cv2.imshow('sds', X_test[0])
+    cv2.waitKey(0)
+
+    cv2.imwrite("testmnist.png", X_test[0])
 
     testImg = testImg.reshape(IMG_SIZE * IMG_SIZE)
     testImg = testImg / 255
