@@ -47,10 +47,10 @@ class MyPaintApp(App):
         clearbtn.bind(on_release=self.clear_canvas)
         saveBtn = Button(text='save')
         saveBtn.bind(on_release=self.save_canvas)
-        label = Label(text='This number is: X', font_size='20sp')
+        self.label = Label(text='This number is: X', font_size='20sp')
         layout.add_widget(clearbtn)
         layout.add_widget(saveBtn)
-        layout.add_widget(label)
+        layout.add_widget(self.label)
 
         self.paint_container.add_widget(self.painter)
         self.parent.add_widget(layout)
@@ -85,17 +85,17 @@ class MyPaintApp(App):
                 y += 1
 
             x += 1
+        if mass_center_count != 0:
+            mass_center_x /= mass_center_count
+            mass_center_y /= mass_center_count
 
-        mass_center_x /= mass_center_count
-        mass_center_y /= mass_center_count
+            imgCenter = int(IMG_DETAILS.IMG_SIZE / 2)
 
-        imgCenter = int(IMG_DETAILS.IMG_SIZE / 2)
-
-        savedImg = translateImg(savedImg, int(imgCenter - mass_center_x), int(imgCenter - mass_center_y))
+            savedImg = translateImg(savedImg, int(imgCenter - mass_center_x), int(imgCenter - mass_center_y))
 
         cv2.imwrite("handwritten_input.png", savedImg)
 
-        CNN.test_model()
+        self.label.text = "This number is: " + str(CNN.test_model())
 
 
 def translateImg(img, x_transl, y_transl):
@@ -105,7 +105,6 @@ def translateImg(img, x_transl, y_transl):
         y = 0
         for pixel in row:
             if pixel > 51:
-                # toReturn[x][y] = 0
                 x_pos = x + x_transl
                 y_pos = y + y_transl
                 if x_pos > -1 and y_transl > -1 and x_pos < IMG_DETAILS.IMG_SIZE and y_pos < IMG_DETAILS.IMG_SIZE:

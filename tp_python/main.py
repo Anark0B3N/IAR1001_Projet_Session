@@ -17,63 +17,15 @@ def main():
     # images, labels = mndata.load_testing()
 
     # Hough()
+
+    ######
+    ### To train the neural network, uncomment the two next lines, then comment again on next launch
+    ######
     # CNN.load_imgs()
     # CNN.create_training_data()
-    #
-    # CNN.train([],[])
+
     runDrawer()
-    #
-
-    # quit = False
-    # while(not quit):
-    #     imageFound = False
-    #     keepImage = True
-    #     while(not imageFound):
-    #         print('\nBonjour, voici les images disponnibles dans le répertoire de travail')
-    #         imgs = findAllImagesNames()
-    #         for image in imgs:
-    #             print(image)
-    #         imageToRead = input("Avec quelle image voulez-vous travailler?:")
-    #
-    #         if imageToRead not in imgs:
-    #             print ("L'image " + imageToRead + " n'existe pas, merci de réessayer")
-    #         else:
-    #             imageNameTable = []
-    #             imageNameTable.append(imageToRead)
-    #             img = returnActualImages(imageNameTable)[0]
-    #             imageFound = True
-    #     while(keepImage):
-    #         print("Que voulez-vous faire?\n1 - Voir l'image sélectionnée\n2 - Afficher les zones d'intérêt de l'image"
-    #               "\n3 - Choisir une nouvelle image\n4 - quitter")
-    #         choix = input("Entrez votre choix: ")
-    #         imageTable = []
-    #         imageTable.append(img)
-    #         if choix == '1':
-    #             displayImages(imageTable)
-    #         elif choix == '2':
-    #             contours = returnContours(imageTable)[0]
-    #             imageContours = returnActualImages(imageNameTable)[0]
-    #             cv2.drawContours(imageContours, contours, -1, (0,255,0), 3)
-    #             contoursTable = []
-    #             contoursTable.append(imageContours)
-    #             displayImages(contoursTable)
-    #             yesOrNo = False
-    #             while not yesOrNo:
-    #                 saveYesOrNo = input("Voulez-vous enregistrer l'image avec les contours? Y/N: ")
-    #                 if saveYesOrNo == 'y' or saveYesOrNo == 'Y':
-    #                     cv2.imwrite(input("S'il-vous-plait entrez le nom de l'image à "
-    #                                       "enregistrer sans l'extension: ") + ".jpg", imageContours)
-    #                     yesOrNo = True
-    #                 elif saveYesOrNo == 'n' or saveYesOrNo == 'N':
-    #                     yesOrNo = True
-    #         elif choix == '3':
-    #             keepImage = False
-    #         elif choix == '4':
-    #             keepImage = False
-    #             quit = True
-    #         else:
-    #             print("Votre choix ne correspond à aucune option, veuillez recommencer\n")
-
+   
 #reads all images in working folder and return their names
 def findAllImagesNames():
     imgs = []
