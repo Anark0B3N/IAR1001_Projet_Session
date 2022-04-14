@@ -98,17 +98,19 @@ class MyPaintApp(App):
 
 
 def translateImg(img, x_transl, y_transl):
-    toReturn = img.copy()
+    toReturn = numpy.zeros((28,28))
     x = 0
     for row in img:
         y = 0
         for pixel in row:
             if pixel > 51:
-                toReturn[x][y] = 0
+                # toReturn[x][y] = 0
                 x_pos = x + x_transl
                 y_pos = y + y_transl
                 if x_pos > -1 and y_transl > -1 and x_pos < 28 and y_pos < 28:
                     toReturn[x_pos][y_pos] = 255
+                else:
+                    a = 8
 
             y += 1
         x += 1
