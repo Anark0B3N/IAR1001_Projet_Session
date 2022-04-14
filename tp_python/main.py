@@ -20,6 +20,7 @@ def main():
     # CNN.load_imgs()
     # CNN.create_training_data()
     #
+    CNN.train([],[])
     runDrawer()
     #
 

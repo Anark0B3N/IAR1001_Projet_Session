@@ -78,6 +78,34 @@ def train(X, label):
     X_train_flattened = X_train.reshape(len(X_train), 28 * 28)
     X_test_flattened = X_test.reshape(len(X_test), 28 * 28)
 
+    it = 0
+    for img in X_train_flattened:
+        imgCopy = img
+        it2 = 0
+        for pixel in imgCopy:
+            if pixel > 0.2:
+                imgCopy[it2] = 1
+            else:
+                imgCopy[it2] = 0
+            it2 += 1
+
+        X_train_flattened[it] = imgCopy
+
+
+
+    it = 0
+    for img in X_test_flattened:
+        imgCopy = img
+        it2 = 0
+        for pixel in imgCopy:
+            if pixel > 0.2:
+                imgCopy[it2] = 1
+            else:
+                imgCopy[it2] = 0
+            it2 += 1
+
+        X_test_flattened[it] = imgCopy
+
 
     model = Sequential([
         Dense(100, input_shape=(784,), activation='relu'),
@@ -92,6 +120,7 @@ def train(X, label):
                   metrics=['accuracy'])
 
     model.fit(X_train_flattened, y_train, epochs=7)
+
 
     # model = Sequential()
     #
@@ -141,14 +170,65 @@ def test_model():
     cv2.imshow('sds', X_test[0])
     cv2.waitKey(0)
 
-    cv2.imwrite("testmnist.png", X_test[0])
+    imgTestSave = X_test[0]
+    x = 0
+    for row in imgTestSave:
+        y = 0
+        for pixel in row:
+            if pixel > (0.2 * 255):
+                imgTestSave[x][y] = 255
+            else:
+                imgTestSave[x][y] = 0
+            y += 1
+        x += 1
+
+
+    cv2.imwrite("testmnist.png", imgTestSave)
 
     testImg = testImg.reshape(IMG_SIZE * IMG_SIZE)
     testImg = testImg / 255
 
     testArray = numpy.array([testImg, testImg])
 
-    y_predicted = myModel.predict(testArray)
+    global imgTable
+    global training_data
+    global training_data_label
+
+    load_imgs()
+
+    label_num = -1
+    for index, img_row in enumerate(imgTable):  # do dogs and cats
+
+        if index % 5 == 0:
+            # set label
+            label_num += 1
+
+        for img in img_row:
+            img_resized = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
+            img_resized = img_resized / 255
+            img_resized = img_resized.reshape(IMG_SIZE * IMG_SIZE)
+            training_data.append(img_resized)
+            training_data_label.append(label_num)
+
+    # training_data shape is (5000 images, 50 pixels, 50 pixels
+    # training_data_label shape is (5000 label, 10 float representing the number) -> ex: 5 = [0. 0. 0. 0. 0. 1. 0. 0. 0. 0.]
+
+    # each number have 500 images for a total of 5000
+
+    X = np.array(training_data).reshape(5000, IMG_SIZE * IMG_SIZE)
+    # training_data_label = np.array(training_data_label).reshape(-1, 10)
+
+    labels = numpy.array(training_data_label)
+
+    y_predicted = myModel.predict(X)
+
+    it = 0
+    for item in y_predicted:
+        print("should be :")
+        print(labels[it])
+        print(item)
+        print(np.argmax(item))
+        it += 1
 
     print(y_predicted[0])
     print(np.argmax(y_predicted[0]))
