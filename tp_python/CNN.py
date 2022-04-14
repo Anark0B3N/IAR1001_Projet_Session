@@ -76,6 +76,8 @@ def train(X, label):
     X_test = X_test / 255
 
     X_train_flattened = X_train.reshape(len(X_train), 28 * 28)
+    np.append(X_train_flattened, X)
+    np.append(y_train, label)
     X_test_flattened = X_test.reshape(len(X_test), 28 * 28)
 
     it = 0
@@ -109,9 +111,10 @@ def train(X, label):
 
     model = Sequential([
         Dense(100, input_shape=(784,), activation='relu'),
-        Dense(55, activation='relu'),
-        Dense(70, activation='relu'),
-        Dense(100, activation='relu'),
+        Dense(2500, activation='relu'),
+        Dense(2000, activation='relu'),
+        Dense(1000, activation='relu'),
+        Dense(500, activation='relu'),
         Dense(10, activation='sigmoid')
     ])
 
@@ -190,45 +193,45 @@ def test_model():
 
     testArray = numpy.array([testImg, testImg])
 
-    global imgTable
-    global training_data
-    global training_data_label
-
-    load_imgs()
-
-    label_num = -1
-    for index, img_row in enumerate(imgTable):  # do dogs and cats
-
-        if index % 5 == 0:
+    # global imgTable
+    # global training_data
+    # global training_data_label
+    #
+    # load_imgs()
+    #
+    # label_num = -1
+    # for index, img_row in enumerate(imgTable):  # do dogs and cats
+    #
+    #     if index % 5 == 0:
             # set label
-            label_num += 1
-
-        for img in img_row:
-            img_resized = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
-            img_resized = img_resized / 255
-            img_resized = img_resized.reshape(IMG_SIZE * IMG_SIZE)
-            training_data.append(img_resized)
-            training_data_label.append(label_num)
+            # label_num += 1
+        #
+        # for img in img_row:
+        #     img_resized = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
+        #     img_resized = img_resized / 255
+        #     img_resized = img_resized.reshape(IMG_SIZE * IMG_SIZE)
+        #     training_data.append(img_resized)
+        #     training_data_label.append(label_num)
 
     # training_data shape is (5000 images, 50 pixels, 50 pixels
     # training_data_label shape is (5000 label, 10 float representing the number) -> ex: 5 = [0. 0. 0. 0. 0. 1. 0. 0. 0. 0.]
 
     # each number have 500 images for a total of 5000
 
-    X = np.array(training_data).reshape(5000, IMG_SIZE * IMG_SIZE)
+    # X = np.array(training_data).reshape(5000, IMG_SIZE * IMG_SIZE)
     # training_data_label = np.array(training_data_label).reshape(-1, 10)
 
-    labels = numpy.array(training_data_label)
+    # labels = numpy.array(training_data_label)
 
-    y_predicted = myModel.predict(X)
+    y_predicted = myModel.predict(testArray)
 
-    it = 0
-    for item in y_predicted:
-        print("should be :")
-        print(labels[it])
-        print(item)
-        print(np.argmax(item))
-        it += 1
+    # it = 0
+    # for item in y_predicted:
+    #     print("should be :")
+    #     print(labels[it])
+    #     print(item)
+    #     print(np.argmax(item))
+    #     it += 1
 
     print(y_predicted[0])
     print(np.argmax(y_predicted[0]))
