@@ -21,7 +21,7 @@ def runDrawer():
 
 
 class MyPaintWidget(Widget):
-
+    # Functions used to let the user draw characters
     def on_touch_down(self, touch):
 
         with self.canvas:
@@ -61,6 +61,7 @@ class MyPaintApp(App):
     def clear_canvas(self, obj):
         self.painter.canvas.clear()
 
+    # Function takes hand drawned character and saves it as a centered black and white picture of the desired size
     def save_canvas(self, obj):
         self.parent.export_to_png("handwritten_input.png")
         savedImg = cv2.imread("handwritten_input.png", cv2.COLOR_BGRA2GRAY)
@@ -74,6 +75,7 @@ class MyPaintApp(App):
         mass_center_count = 0
         mass_center_y = 0
 
+        # detects the center mass of the hand drawned picture
         x = 0
         for row in savedImg:
             y = 0
@@ -90,14 +92,15 @@ class MyPaintApp(App):
             mass_center_y /= mass_center_count
 
             imgCenter = int(IMG_DETAILS.IMG_SIZE / 2)
-
             savedImg = translateImg(savedImg, int(imgCenter - mass_center_x), int(imgCenter - mass_center_y))
 
+        # Saves image
         cv2.imwrite("handwritten_input.png", savedImg)
 
+        # Calls detection method and writes the answer in the widget
         self.label.text = "This number is: " + str(CNN.test_model())
 
-
+# Function translates image according to center mass in order to center it and return new centered picture
 def translateImg(img, x_transl, y_transl):
     toReturn = numpy.zeros((IMG_DETAILS.IMG_SIZE,IMG_DETAILS.IMG_SIZE))
     x = 0
@@ -107,7 +110,8 @@ def translateImg(img, x_transl, y_transl):
             if pixel > 51:
                 x_pos = x + x_transl
                 y_pos = y + y_transl
-                if x_pos > -1 and y_transl > -1 and x_pos < IMG_DETAILS.IMG_SIZE and y_pos < IMG_DETAILS.IMG_SIZE:
+                # Replaces the pixels toward the mass center
+                if x_pos > -1 and y_pos > -1 and x_pos < IMG_DETAILS.IMG_SIZE and y_pos < IMG_DETAILS.IMG_SIZE:
                     toReturn[x_pos][y_pos] = 255
                 else:
                     a = 8

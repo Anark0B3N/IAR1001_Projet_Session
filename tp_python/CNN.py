@@ -19,6 +19,7 @@ training_data = []
 training_data_label = []
 imgTable = []
 
+#Function loads images for eventual training
 def load_imgs():
     listOfImages = []
 
@@ -35,7 +36,7 @@ def load_imgs():
     imgTable = np.array(cells)
 
 
-
+# Creating the data for the CNN training
 def create_training_data():
 
     global imgTable
@@ -49,6 +50,7 @@ def create_training_data():
             # set label
             label_num += 1
 
+        # Resizing the images
         for img in img_row:
             img_resized = cv2.resize(img, (IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
             img_resized = img_resized / 255
@@ -65,14 +67,16 @@ def create_training_data():
     X = np.array(training_data).reshape(5000, IMG_DETAILS.IMG_SIZE*IMG_DETAILS.IMG_SIZE)
     train(X, numpy.array(training_data_label))
 
-
+# Actual training
 def train(X, label):
     (X1_train, y_train), (X1_test, y_test) = tf.keras.datasets.mnist.load_data()
 
+    # Creating tables for training and test images
     X_train = numpy.empty((60000, IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
     X_test = numpy.empty((60000, IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
 
     it_image = 0
+    # resizing images to the desired resolution
     for image in X1_train:
         X_train[it_image] = cv2.resize(image, (IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
         it_image += 1
@@ -82,10 +86,11 @@ def train(X, label):
         X_test[it_image] = cv2.resize(image, (IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
         it_image += 1
 
-
+    # This normalizes the value of each pixels from 0 to 255 to 0 to 1
     X_train = X_train / 255
     X_test = X_test / 255
 
+    #Now flattening each images so they all appear as one dimentional array
     X_train_flattened = X_train.reshape(len(X_train), IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE)
     np.append(X_train_flattened, X)
     np.append(y_train, label)
@@ -119,7 +124,9 @@ def train(X, label):
 
         X_test_flattened[it] = imgCopy
 
-
+    #Creating our neural network model, we use six dense (each neuron from a layer is connected to each neurons
+    # of both adjacent layers) layers.
+    # We found, after many trials and errors that this configuration works best
     model = Sequential([
         Dense(100, input_shape=(IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE,), activation='relu'),
         Dense(2500, activation='relu'),
@@ -133,21 +140,25 @@ def train(X, label):
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
+    #We run the training 7 times
     model.fit(X_train_flattened, y_train, epochs=7)
     model.save('cnn_image_digit_model.model')
 
-
+# Function tests created model using the user drawned picture
 def test_model():
     global training_data
-
+    # Loading model
     myModel = tf.keras.models.load_model('cnn_image_digit_model.model')
 
+    # Loading drawned image
     appImg = cv2.imread("handwritten_input.png", cv2.COLOR_BGR2GRAY)
 
+    # Resizing the picture
     testImg = cv2.resize(appImg, (IMG_DETAILS.IMG_SIZE, IMG_DETAILS.IMG_SIZE))
 
     cv2.imshow('sds', testImg)
 
+    # Now flattening and normalizing the picture
     testImg = testImg.reshape(IMG_DETAILS.IMG_SIZE * IMG_DETAILS.IMG_SIZE)
     testImg = testImg / 255
 
@@ -164,4 +175,5 @@ def test_model():
 
     print(y_predicted[0])
     print(np.argmax(y_predicted[0]))
+    # Returns the model's prediction
     return (np.argmax(y_predicted[0]))

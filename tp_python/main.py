@@ -3,7 +3,7 @@ import math
 import cv2
 import glob
 import numpy as np
-from mnist import MNIST
+from mnist.loader import MNIST
 
 
 
@@ -18,9 +18,9 @@ def main():
 
     # Hough()
 
-    ######
+    ###### **************************************************************
     ### To train the neural network, uncomment the two next lines, then comment again on next launch
-    ######
+    ###### **************************************************************
     # CNN.load_imgs()
     # CNN.create_training_data()
 
